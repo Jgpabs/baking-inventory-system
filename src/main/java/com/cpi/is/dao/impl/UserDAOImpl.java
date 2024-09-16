@@ -10,36 +10,30 @@ import com.cpi.is.entity.SessionEntity;
 import com.cpi.is.entity.UserEntity;
 import com.cpi.is.util.HBUtil;
 
-public class UserDAOImpl implements UserDAO{
+public class UserDAOImpl implements UserDAO {
 
 	@Override
 	public UserEntity authenticate(UserEntity user) throws Exception {
 		UserEntity authenticated = null;
 		try (Session session = HBUtil.getSessionFactory().openSession()) {
-			List<UserEntity> results = (List<UserEntity>) session
+			authenticated = (UserEntity) session
 					.createQuery("FROM UserEntity T WHERE T.username = :username AND T.password = :password", UserEntity.class)
 					.setParameter("username", user.getUsername())
 					.setParameter("password", user.getPassword())
-					.list();
-			if (results.size() > 0) {
-				authenticated = results.get(0);
-			}
+					.getSingleResultOrNull();
 		}
 		return authenticated;
 	}
-	
+
 	public UserEntity getUser(String username) throws Exception {
-		UserEntity result = null;
+		UserEntity user = null;
 		try (Session session = HBUtil.getSessionFactory().openSession()) {
-			List<UserEntity> results = (List<UserEntity>) session
+			 user = (UserEntity) session
 					.createQuery("FROM UserEntity T WHERE T.username = :username", UserEntity.class)
 					.setParameter("username", username)
-					.list();
-			if (results.size() > 0) {
-				result = results.get(0);
-			}
+					.getSingleResultOrNull();
 		}
-		return result;
+		return user;
 	}
 
 	@Override
@@ -54,7 +48,7 @@ public class UserDAOImpl implements UserDAO{
 				transaction.rollback();
 			}
 			throw e;
-		}		
+		}
 	}
 
 	@Override
@@ -62,10 +56,10 @@ public class UserDAOImpl implements UserDAO{
 		SessionEntity validated = null;
 		try (Session session = HBUtil.getSessionFactory().openSession()) {
 			List<SessionEntity> results = session
-					.createQuery("FROM SessionEntity T WHERE T.sessionId = :sessionId AND T.username = :username", SessionEntity.class)
+					.createQuery("FROM SessionEntity T WHERE T.sessionId = :sessionId AND T.username = :username",
+							SessionEntity.class)
 					.setParameter("sessionId", userSession.getSessionId())
-					.setParameter("username", userSession.getUsername())
-					.list();
+					.setParameter("username", userSession.getUsername()).list();
 			if (results.size() > 0) {
 				validated = results.get(0);
 			}
@@ -85,7 +79,6 @@ public class UserDAOImpl implements UserDAO{
 				transaction.rollback();
 			}
 			throw e;
-		}		
+		}
 	}
-
 }
