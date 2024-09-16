@@ -159,7 +159,7 @@ public class DispatchingServiceImpl implements DispatchingService {
 	
 	public String validateQuantity(HttpServletRequest request, List<FinishedProductListEntity> finishedProductList) throws Exception{
 		JSONObject json = new JSONObject(request.getParameter("data"));
-		String validation = "Please fill-out the dispatching form properly test";
+		String validation = "Please fill-out the dispatching form properly";
 
 		List<DispatchingEntity> dispatchingEntities = getData(Long.parseLong(json.getString("branchId")));
 		
